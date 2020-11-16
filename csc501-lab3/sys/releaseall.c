@@ -30,7 +30,7 @@ int releaseall (int numlocks, long lks,...)
        		}
 		else
 		{
-			lptr = &locks[ld];
+			lptr = &lockTable[ld];
 			if (lptr->lproc_list[currpid] == 1)
 			{
 				releaseLDForProc(currpid, ld);					
