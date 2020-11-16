@@ -8,6 +8,8 @@
 #include <mem.h>
 #include <io.h>
 #include <stdio.h>
+#include <lock.h>
+
 
 LOCAL int newpid();
 
@@ -95,6 +97,16 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	*--saddr = 0;		/* %esi */
 	*--saddr = 0;		/* %edi */
 	*pushsp = pptr->pesp = (unsigned long)saddr;
+
+	pptr->pinh = 0;
+	for (i=0;i<NLOCKS;i++)
+	{
+		pptr->bm_locks[i] = 0;
+	}
+	pptr->lock_id = -1;
+	pptr->wait_time = 0;
+	pptr->wait_ltype = -1;
+
 
 	restore(ps);
 	return(pid);
