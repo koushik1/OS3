@@ -178,9 +178,11 @@ LOCAL int sysinit()
 		(sptr = &semaph[i])->sstate = SFREE;
 		sptr->sqtail = 1 + (sptr->sqhead = newqueue());
 	}
-
+	
+	linit(); /* initialize lock descriptors */
+	
 	rdytail = 1 + (rdyhead=newqueue());/* initialize ready list */
-	linit();
+
 #ifdef	MEMMARK
 	_mkinit();			/* initialize memory marking */
 #endif
