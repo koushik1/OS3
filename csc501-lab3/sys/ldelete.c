@@ -27,7 +27,7 @@ int ldelete (int ld)
 		return(SYSERR);
     }
 
-    struct	lentry	*lptr = &locks[lockdescriptor];
+    struct	lentry	*lptr = &locks[ld];
     lptr->lstate = LFREE;
 	lptr->ltype = DELETED;
 	lptr->lprio = -1;
@@ -45,10 +45,10 @@ int ldelete (int ld)
     int queue_head = nonempty(lptr->lqhead);
     if (queue_head)
     {
-        pid = getfirst(lptr->lqhead);
+        int pid = getfirst(lptr->lqhead);
         while (pid != EMPTY)
         {
-             proctab[pid].lockid = -1;
+             proctab[pid].lock_id = -1;
              ready(pid,RESCHNO);
 
         }
