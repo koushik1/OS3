@@ -37,7 +37,7 @@ int ldelete (int ld)
     {
         if (lptr->lproc_list[i] == 1)
         {
-            lptr->lproc_list[i] == 0;
+            lptr->lproc_list[i] = 0;
             proctab[i].bm_locks[ld] = 0;
         }
     }
