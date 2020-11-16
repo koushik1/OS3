@@ -5,33 +5,45 @@
 #include <lock.h>
 #include <stdio.h>
 
+LOCAL int newlock();
 
+/*------------------------------------------------------------------------
+ * lcreate  --  create and initialize a lock, returning its id
+ *------------------------------------------------------------------------
+ */
 int lcreate()
 {
 	STATWORD ps;    
+	int	ld;
+
 	disable(ps);
-
-	int	lock_desc;
-    int i;
-    for (i = 0; i < NLOCKS; i++)
-    {
-        if (nextlock < 0)
-        {
-            nextlock = NLOCKS - 1;
-        }
-        lock_desc = nextlock;
-		if (locks[lock_desc].lstate==LFREE) {
-			locks[lock_desc].lstate = LUSED;
-            restore(ps);
-			return(lock_desc);
-		}
-        nextlock = nextlock - 1;
-
-    }
-    restore(ps);
-    return(SYSERR);
-
-
+	if ((ld=newlock())==SYSERR) {
+		restore(ps);
+		return(SYSERR);
+	}
+	
+	/* lqhead and lqtail were initialized at system startup */
+	restore(ps);
+	return(ld);
 }
 
+/*------------------------------------------------------------------------
+ * newlock  --  allocate an unused lock and return its index
+ *------------------------------------------------------------------------
+ */
+LOCAL int newlock()
+{
+	int	ld;
+	int	i;
 
+	for (i=0 ; i<NLOCKS ; i++) {
+		ld=nextlock--;
+		if (ld < 0)
+			nextlock = NLOCKS-1;
+		if (rw_locks[ld].lstate==LFREE) {
+			rw_locks[ld].lstate = LUSED;
+			return(ld);
+		}
+	}
+	return(SYSERR);
+}
