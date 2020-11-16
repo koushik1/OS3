@@ -20,5 +20,10 @@ SYSCALL getprio(int pid)
 		return(SYSERR);
 	}
 	restore(ps);
-	return(pptr->pprio);
+	if (pptr->pinh == 0)
+		return pptr->pprio;
+	else
+		return pptr->pinh;
+
 }
+
