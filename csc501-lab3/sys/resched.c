@@ -22,8 +22,19 @@ int resched()
 
 	/* no switch needed if current process priority higher than next*/
 
-	if ( ( (optr= &proctab[currpid])->pstate == PRCURR) &&
-	   (lastkey(rdytail)<optr->pprio)) {
+	optr= &proctab[currpid];
+	int current_prio = -1;
+	if (optr->pinh == 0)
+	{
+		current_prio =  optr->pprio;
+	}
+	else
+	{
+		current_prio =  optr->pinh;
+	}
+
+	if ( ( optr->pstate == PRCURR) &&
+	   (lastkey(rdytail)<current_prio)) {
 		return(OK);
 	}
 	
@@ -31,7 +42,7 @@ int resched()
 
 	if (optr->pstate == PRCURR) {
 		optr->pstate = PRREADY;
-		insert(currpid,rdyhead,optr->pprio);
+		insert(currpid,rdyhead,current_prio);
 	}
 
 	/* remove highest priority process at end of ready list */
