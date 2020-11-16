@@ -9,9 +9,6 @@
 #define	NPROC		30		/*  allowed if not already done	*/
 #endif
 
-#define NLOCKS 50
-
-
 #ifndef	_NFILE
 #define _NFILE		20		/* # of files allowed */
 #endif
@@ -41,6 +38,10 @@
 
 #define	isbadpid(x)	(x<=0 || x>=NPROC)
 
+#ifndef NLOCKS
+#define NLOCKS          50      /* number of maximum locks */
+#endif
+
 /* process table entry */
 
 struct	pentry	{
@@ -64,11 +65,13 @@ struct	pentry	{
 	int	ppagedev;		/* pageing dgram device		*/
 	int	pwaitret;
 
-	int pinh;
-	int	bm_locks[NLOCKS];
-	int lock_id;
-	int wait_ltype;
-	unsigned long wait_time;
+	int 	pinh; 	/* current inherited priority of the process */
+	int	bm_locks[NLOCKS]; /* bit mask of all locks held by the process */
+	int 	wait_lockid;	/* lock descriptor on which process has been blocked */ 
+	unsigned long wait_time; /* waiting time period for which the process has been blocked  */
+	int 	wait_pprio;	/* waiting priority of the process for acquiring lock */
+	int 	wait_ltype; /* lock type requested either READ/WRITE on which process has been blocked */
+	int 	plockret;	 	
 };
 
 
