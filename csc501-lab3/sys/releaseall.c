@@ -15,7 +15,7 @@ int releaseall (int numlocks, long lks,...)
 	
 	int i;
 	int ld;
-    unsigned long *a; 
+        unsigned long *a; 
 	int flag = 0;
 	pptr = &proctab[currpid];
 	
@@ -24,13 +24,15 @@ int releaseall (int numlocks, long lks,...)
 	{
 		ld = *a++;
 
-		if ((ld < 0 || ld >= NLOCKS)) 
+		//kprintf("%d",ld);
+		/* check if lock descriptor passed is valid or not and is held by the calling process */
+		if (isbadlock(ld)) 
 		{
                		flag = 1;	   	
        		}
 		else
 		{
-			lptr = &locks[ld];
+			lptr = &rw_locks[ld];
 			if (lptr->lproc_list[currpid] == 1)
 			{
 				releaseLDForProc(currpid, ld);					
@@ -60,7 +62,7 @@ void releaseLDForProc(int pid, int ld)
 	int maxprio = -1;
 	int i=0;
 
-	lptr = &locks[ld];
+	lptr = &rw_locks[ld];
 	pptr = &proctab[pid];
 
 	/* set ltype deleted temporarily */
@@ -69,7 +71,7 @@ void releaseLDForProc(int pid, int ld)
 	
 	/* release ld lock from bit mask */
 	pptr->bm_locks[ld] = 0;
-	pptr->lock_id = -1;
+	pptr->wait_lockid = -1;
 	pptr->wait_ltype = -1;
 
 	if (nonempty(lptr->lqhead))
@@ -111,7 +113,7 @@ void releaseLDForProc(int pid, int ld)
  				lptr->ltype = READ;
 				lptr->lproc_list[prev] = 1;
 				nptr->wait_time = 0;
-				nptr->lock_id = -1;
+				nptr->wait_lockid = -1;
 				nptr->wait_ltype = -1;
 
 				ready(prev, RESCHNO);
@@ -148,7 +150,7 @@ void releaseLDForProc(int pid, int ld)
  						lptr->ltype = WRITE;
 						lptr->lproc_list[wpid] = 1;
 						nptr->wait_time = 0;
-						nptr->lock_id = -1;
+						nptr->wait_lockid = -1;
 						nptr->wait_ltype = -1;
 
 						ready(wpid, RESCHNO);
@@ -168,7 +170,7 @@ void releaseLDForProc(int pid, int ld)
  						lptr->ltype = READ;
 						lptr->lproc_list[prev] = 1;
 						nptr->wait_time = 0;
-						nptr->lock_id = -1;
+						nptr->wait_lockid = -1;
 						nptr->wait_ltype = -1;
 
 						ready(prev, RESCHNO);
@@ -189,7 +191,7 @@ void releaseLDForProc(int pid, int ld)
  					lptr->ltype = READ;
 					lptr->lproc_list[prev] = 1;
 					nptr->wait_time = 0;
-					nptr->lock_id = -1;
+					nptr->wait_lockid = -1;
 					nptr->wait_ltype = -1;
 
 					ready(prev, RESCHNO);
@@ -199,7 +201,7 @@ void releaseLDForProc(int pid, int ld)
 				
 	}
 		
-	lptr->lprio = get_max_process_prio(ld);
+	lptr->lprio = getMaxPriorityInLockWQ(ld);
 	maxprio = getMaxWaitProcPrioForPI(pid);
 	
 	if (maxprio > pptr->pprio)
@@ -212,4 +214,22 @@ void releaseLDForProc(int pid, int ld)
 	}
 	
 			
+}
+
+void releaseLDForWaitProc(pid, ld)
+{
+	struct lentry *lptr;
+	struct pentry *pptr;
+	
+	lptr = &rw_locks[ld];
+	pptr = &proctab[pid];
+
+	dequeue(pid);
+	pptr->wait_lockid = -1;
+	pptr->wait_ltype = -1;
+	pptr->wait_time = 0;
+	pptr->plockret = DELETED;
+
+	lptr->lprio = getMaxPriorityInLockWQ(ld);	
+	rampUpProcPriority(ld,-1);
 }
