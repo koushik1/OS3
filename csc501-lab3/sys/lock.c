@@ -12,7 +12,7 @@ int lock (int ldes1, int type, int priority)
 	struct pentry *pptr;
 	disable(ps);
 	
-	if ((ldes1 < 0 || ldes1 >= NLOCKS) || (lptr= &rw_locks[ldes1])->lstate==LFREE) {
+	if ((ldes1 < 0 || ldes1 >= NLOCKS) || (lptr= &locks[ldes1])->lstate==LFREE) {
 		restore(ps);
 		return(SYSERR);
 	}
@@ -108,7 +108,7 @@ int get_max_process_prio(int lock_d)
 
     int curr ;
     int max_priority = -1;
-    for(curr = q[lptr->lqhead].qnext; curr!=lptr->lqrail; curr = q[x].qnext)
+    for(curr = q[lptr->lqhead].qnext; curr!=lptr->lqtail; curr = q[curr].qnext)
     {
         pptr = &proctab[curr];
         int current_prio = -1;
@@ -151,7 +151,6 @@ int block_process(struct pentry *pptr,int lock_d,int priority,int type,int pid)
 
     increaseProcPriority(lock_d,current_prio); 		 
     resched();
-    restore(ps);
     return OK;	
 }
 
