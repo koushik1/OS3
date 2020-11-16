@@ -13,7 +13,7 @@ int lcreate()
 
 	int	lock_desc;
     int i;
-    for (i - 0; i < NLOCKS; i++)
+    for (i = 0; i < NLOCKS; i++)
     {
         if (nextlock < 0)
         {
