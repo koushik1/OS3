@@ -14,11 +14,11 @@ SYSCALL ldelete(int lockdescriptor)
 	int i;
 
 	disable(ps);
-	if (isbadlock(lockdescriptor) || rw_locks[lockdescriptor].lstate==LFREE) {
+	if (isbadlock(lockdescriptor) || locks[lockdescriptor].lstate==LFREE) {
 		restore(ps);
 		return(SYSERR);
 	}
-	lptr = &rw_locks[lockdescriptor];
+	lptr = &locks[lockdescriptor];
 	lptr->lstate = LFREE;
 	lptr->ltype = DELETED;
 	lptr->lprio = -1;
