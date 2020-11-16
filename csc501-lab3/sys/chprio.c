@@ -36,7 +36,7 @@ SYSCALL chprio(int pid, int newprio)
 	ld = checkProcessTransitivityForPI(pid);
 	if (ld != -1)
 	{
-		lptr = &locks[ld];
+		lptr = &lockTable[ld];
 		lptr->lprio = getMaxPriorityInLockWQ(ld);
 		rampUpProcPriority(ld,-1);	
 	} 

@@ -60,7 +60,7 @@ void releaseLDForProc(int pid, int ld)
 	int maxprio = -1;
 	int i=0;
 
-	lptr = &locks[ld];
+	lptr = &lockTable[ld];
 	pptr = &proctab[pid];
 
 	/* set ltype deleted temporarily */
@@ -219,7 +219,7 @@ void releaseLDForWaitProc(pid, ld)
 	struct lentry *lptr;
 	struct pentry *pptr;
 	
-	lptr = &locks[ld];
+	lptr = &lockTable[ld];
 	pptr = &proctab[pid];
 
 	dequeue(pid);

@@ -18,7 +18,7 @@ void linit()
 	
 	for (i=0;i<NLOCKS;i++) 
 	{
-		lptr = &locks[i];
+		lptr = &lockTable[i];
 		lptr->lstate = 	LFREE;
 		lptr->lqtail = 1 + (lptr->lqhead = newqueue());
 		lptr->ltype = DELETED;

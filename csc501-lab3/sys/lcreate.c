@@ -33,8 +33,8 @@ LOCAL int newlock()
 		ld=nextlock--;
 		if (ld < 0)
 			nextlock = NLOCKS-1;
-		if (locks[ld].lstate==LFREE) {
-			locks[ld].lstate = LUSED;
+		if (lockTable[ld].lstate==LFREE) {
+			lockTable[ld].lstate = LUSED;
 			return(ld);
 		}
 	}
