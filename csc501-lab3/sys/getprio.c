@@ -20,10 +20,5 @@ SYSCALL getprio(int pid)
 		return(SYSERR);
 	}
 	restore(ps);
-	if (pptr->pinh == 0)
-		return pptr->pprio;
-	else
-		return pptr->pinh;
-
+	return(getProcessPriority(pptr));
 }
-
