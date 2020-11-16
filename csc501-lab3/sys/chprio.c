@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <lock.h>
 
-
 /*------------------------------------------------------------------------
  * chprio  --  change the scheduling priority of a process
  *------------------------------------------------------------------------
@@ -37,9 +36,9 @@ SYSCALL chprio(int pid, int newprio)
 	ld = checkProcessTransitivityForPI(pid);
 	if (ld != -1)
 	{
-		lptr = &locks[ld];
-		lptr->lprio = get_max_process_prio(ld);
-		increaseProcPriority(ld,-1);	
+		lptr = &rw_locks[ld];
+		lptr->lprio = getMaxPriorityInLockWQ(ld);
+		rampUpProcPriority(ld,-1);	
 	} 
 	restore(ps);
 	return(newprio);
