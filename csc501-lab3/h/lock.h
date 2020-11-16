@@ -3,7 +3,7 @@
 
 #define READ	1
 #define WRITE	2
-#define DELETED -2
+#define DELETED -6
 #define NLOCKS 50
 
 #define LFREE  0
