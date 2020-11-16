@@ -12,7 +12,7 @@ int lock (int ldes1, int type, int priority)
 	struct pentry *pptr;
 	disable(ps);
 	
-	if (isbadlock(ldes1) || (lptr= &rw_locks[ldes1])->lstate==LFREE) {
+	if (isbadlock(ldes1) || (lptr= &locks[ldes1])->lstate==LFREE) {
 		restore(ps);
 		return(SYSERR);
 	}
@@ -142,7 +142,7 @@ int getMaxPriorityInLockWQ (int ld)
 
 	int lprio = -1;
 	int gprio = -1;	
-	lptr = &rw_locks[ld];
+	lptr = &locks[ld];
 	
 	int next = lptr->lqhead;
 	while (q[next].qnext != lptr->lqtail)
@@ -168,7 +168,7 @@ void rampUpProcPriority (int ld, int priority)
 	int tmpld;
 	int gprio = -1;
 	int maxprio = -1;				
-	lptr = &rw_locks[ld];
+	lptr = &locks[ld];
 
 	for (i=0;i<NPROC;i++)
 	{
@@ -230,7 +230,7 @@ int getMaxWaitProcPrioForPI (int pid)
 	{
 		if (pptr->bm_locks[i] == 1)
 		{
-			lptr = &rw_locks[i];
+			lptr = &locks[i];
 			if (maxprio < lptr->lprio)
 			{
 				maxprio = lptr->lprio;

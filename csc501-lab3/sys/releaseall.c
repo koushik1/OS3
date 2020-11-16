@@ -24,15 +24,13 @@ int releaseall (int numlocks, long lks,...)
 	{
 		ld = *a++;
 
-		//kprintf("%d",ld);
-		/* check if lock descriptor passed is valid or not and is held by the calling process */
 		if (isbadlock(ld)) 
 		{
                		flag = 1;	   	
        		}
 		else
 		{
-			lptr = &rw_locks[ld];
+			lptr = &locks[ld];
 			if (lptr->lproc_list[currpid] == 1)
 			{
 				releaseLDForProc(currpid, ld);					
@@ -62,7 +60,7 @@ void releaseLDForProc(int pid, int ld)
 	int maxprio = -1;
 	int i=0;
 
-	lptr = &rw_locks[ld];
+	lptr = &locks[ld];
 	pptr = &proctab[pid];
 
 	/* set ltype deleted temporarily */
@@ -210,7 +208,7 @@ void releaseLDForProc(int pid, int ld)
 	}
 	else
 	{
-		pptr->pinh = 0; /* as maxprio is either equal or less than original priority of pptr process */
+		pptr->pinh = 0; 
 	}
 	
 			
@@ -221,7 +219,7 @@ void releaseLDForWaitProc(pid, ld)
 	struct lentry *lptr;
 	struct pentry *pptr;
 	
-	lptr = &rw_locks[ld];
+	lptr = &locks[ld];
 	pptr = &proctab[pid];
 
 	dequeue(pid);

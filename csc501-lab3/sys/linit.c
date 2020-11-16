@@ -16,15 +16,14 @@ void linit()
 	int i;
 	int j;
 	
-	for (i=0;i<NLOCKS;i++) /* initialize lock descriptors */
+	for (i=0;i<NLOCKS;i++) 
 	{
-		lptr = &rw_locks[i];
+		lptr = &locks[i];
 		lptr->lstate = 	LFREE;
 		lptr->lqtail = 1 + (lptr->lqhead = newqueue());
 		lptr->ltype = DELETED;
 		lptr->lprio = -1;
 		
-		/* initialize list maintained for processes holding the lock */
 		for (j=0;j<NPROC;j++)
 		{
 			lptr->lproc_list[j] = 0;
