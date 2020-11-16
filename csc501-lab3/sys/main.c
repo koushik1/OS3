@@ -212,7 +212,6 @@ int main( )
 	test1();
 	test2();
 	test3();
-	task1();
         /* The hook to shutdown QEMU for process-like execution of XINU.
  *          * This API call exists the QEMU process.
  *                   */
